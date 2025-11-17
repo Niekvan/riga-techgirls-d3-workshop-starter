@@ -1,0 +1,21 @@
+{
+  "name": "d3-vite-starter",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "d3": "^7.9.0"
+  },
+  "devDependencies": {
+    "vite": "^7.2.2"
+  },
+  "packageManager": "pnpm@10.22.0"
+}
