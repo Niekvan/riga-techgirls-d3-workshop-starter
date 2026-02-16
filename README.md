@@ -36,7 +36,10 @@ pnpm preview
 
 1. **Animated bar chart** – demonstrates the D3 update/join pattern, transitions, and scale updates. Use the **Randomize data** button to trigger new values and watch the bars animate into place.
 2. **Data-bound participant cards** – shows how D3 can bind data to regular DOM nodes (no SVG required). Click **Shuffle participants** to reorder the cards; D3 handles the DOM diff and animates the movement.
-3. **Remote Kaggle dataset loader** – fetches a slice of the [Goodbooks-10k dataset](https://www.kaggle.com/datasets/zygmuntz/goodbooks-10k) and binds the results to cards. Hit **Load Kaggle sample** to pull the latest data (requires network access).
+3. **Radial donut chart** – uses `d3.pie` + `d3.arc` to generate a circular chart. Click **Randomize topics** to update the arcs.
+4. **Interactive scatterplot** – shows scales, axes, and hover labels. Click **Jitter points** to nudge values and update positions.
+5. **Force-directed network** – demonstrates `d3-force` with draggable nodes and live layout updates.
+6. **Remote Kaggle dataset loader** – fetches a slice of the [Goodbooks-10k dataset](https://www.kaggle.com/datasets/zygmuntz/goodbooks-10k) and binds the results to cards. Hit **Load Kaggle sample** to pull the latest data (requires network access).
 
 ## Project Structure
 

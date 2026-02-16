@@ -18,6 +18,40 @@ const participants = [
   { name: 'Marta', focus: 'Accessibility', level: 'Advanced' },
   { name: 'Signe', focus: 'Color theory', level: 'Beginner' }
 ];
+// Radial chart demo data (simple categories with values).
+const radialTopics = [
+  { label: 'Story', value: 28 },
+  { label: 'Mapping', value: 22 },
+  { label: 'Interaction', value: 18 },
+  { label: 'Animation', value: 14 },
+  { label: 'Accessibility', value: 10 }
+];
+// Scatterplot demo data.
+const scatterData = [
+  { name: 'Aija', x: 12, y: 28, group: 'Beginner' },
+  { name: 'Laura', x: 32, y: 18, group: 'Intermediate' },
+  { name: 'Marta', x: 48, y: 46, group: 'Advanced' },
+  { name: 'Signe', x: 22, y: 38, group: 'Beginner' },
+  { name: 'Ilze', x: 40, y: 26, group: 'Intermediate' },
+  { name: 'Rita', x: 28, y: 52, group: 'Advanced' }
+];
+// Force-directed demo data.
+const networkNodes = [
+  { id: 'Story' },
+  { id: 'Maps' },
+  { id: 'Data' },
+  { id: 'Design' },
+  { id: 'Code' },
+  { id: 'Motion' }
+];
+const networkLinks = [
+  { source: 'Story', target: 'Data' },
+  { source: 'Story', target: 'Design' },
+  { source: 'Maps', target: 'Data' },
+  { source: 'Maps', target: 'Code' },
+  { source: 'Motion', target: 'Design' },
+  { source: 'Code', target: 'Data' }
+];
 // Kaggle dataset (Goodbooks-10k) mirrored on GitHub for easier workshop access.
 const kaggleBooksUrl = 'https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv';
 
@@ -121,11 +155,103 @@ remoteControls
 
 const remoteList = remoteExample.append('div').attr('class', 'card-grid');
 
+// Example 4: radial chart (pie/donut) using d3.arc + d3.pie.
+const radialExample = root.append('section').attr('class', 'radial-example');
+radialExample.append('h2').text('Radial chart (donut)');
+radialExample
+  .append('p')
+  .attr('class', 'hint')
+  .text('D3 can generate arcs too. Click to reshuffle values.');
+radialExample.style('position', 'relative');
+
+const radialControls = radialExample.append('div').attr('class', 'controls');
+radialControls
+  .append('button')
+  .text('Randomize topics')
+  .on('click', () => {
+    radialTopics.forEach((d) => {
+      d.value = Math.round(8 + Math.random() * 26);
+    });
+    radialChart.update(radialTopics);
+  });
+
+const radialSvgSize = 320;
+const radialSvg = radialExample
+  .append('svg')
+  .attr('viewBox', `0 0 ${radialSvgSize} ${radialSvgSize}`)
+  .attr('role', 'img')
+  .attr('aria-label', 'Radial chart of workshop topics');
+const radialGroup = radialSvg
+  .append('g')
+  .attr('transform', `translate(${radialSvgSize / 2}, ${radialSvgSize / 2})`);
+const radialLegend = radialExample.append('div').attr('class', 'radial-legend');
+const radialTooltip = radialExample.append('div').attr('class', 'donut-tooltip');
+
+// Example 5: scatterplot with hover labels.
+const scatterExample = root.append('section').attr('class', 'scatter-example');
+scatterExample.append('h2').text('Interactive scatterplot');
+scatterExample
+  .append('p')
+  .attr('class', 'hint')
+  .text('Hover a point to see the label. Click to jitter the data.');
+const scatterControls = scatterExample.append('div').attr('class', 'controls');
+scatterControls
+  .append('button')
+  .text('Jitter points')
+  .on('click', () => {
+    scatterData.forEach((d) => {
+      d.x = Math.max(5, Math.min(55, d.x + (Math.random() * 10 - 5)));
+      d.y = Math.max(5, Math.min(55, d.y + (Math.random() * 10 - 5)));
+    });
+    scatterPlot.update(scatterData);
+  });
+const scatterSvgWidth = 520;
+const scatterSvgHeight = 320;
+const scatterSvg = scatterExample
+  .append('svg')
+  .attr('viewBox', `0 0 ${scatterSvgWidth} ${scatterSvgHeight}`)
+  .attr('role', 'img')
+  .attr('aria-label', 'Scatterplot of demo data');
+const scatterGroup = scatterSvg.append('g').attr('transform', 'translate(50,30)');
+
+// Example 6: force-directed network.
+const networkExample = root.append('section').attr('class', 'network-example');
+networkExample.append('h2').text('Force-directed network');
+networkExample
+  .append('p')
+  .attr('class', 'hint')
+  .text('Drag nodes to feel how forces reshape the network.');
+const networkSvgWidth = 520;
+const networkSvgHeight = 320;
+const networkSvg = networkExample
+  .append('svg')
+  .attr('viewBox', `0 0 ${networkSvgWidth} ${networkSvgHeight}`)
+  .attr('role', 'img')
+  .attr('aria-label', 'Force-directed network of topics');
+const networkGroup = networkSvg.append('g');
+
 const barChart = createBarChart({ barsGroup, xAxis, yAxis, xScale: x, yScale: y });
 barChart.update(dataset);
 
 const participantsList = createParticipantList(cardsContainer);
 participantsList.update(participants);
+
+const radialChart = createRadialChart({
+  group: radialGroup,
+  legend: radialLegend,
+  tooltip: radialTooltip
+});
+radialChart.update(radialTopics);
+
+const scatterPlot = createScatterPlot({
+  group: scatterGroup,
+  width: scatterSvgWidth - 80,
+  height: scatterSvgHeight - 60
+});
+scatterPlot.update(scatterData);
+
+const network = createNetwork({ group: networkGroup, width: networkSvgWidth, height: networkSvgHeight });
+network.render({ nodes: networkNodes, links: networkLinks });
 
 const remoteBooks = createRemoteBooksExample({
   hintSelection: remoteHint,
@@ -310,4 +436,262 @@ function createRemoteBooksExample({ hintSelection, listSelection, datasetUrl }) 
   }
 
   return { load };
+}
+
+/**
+ * Factory for a simple donut chart.
+ * @param {{group: d3.Selection, legend: d3.Selection, tooltip: d3.Selection}} params
+ */
+function createRadialChart({ group, legend, tooltip }) {
+  const radius = 120;
+  const color = d3.scaleOrdinal().range(['#ff2b70', '#ffd94a', '#6ae1ff', '#b388ff', '#9fffa8']);
+  const arc = d3.arc().innerRadius(55).outerRadius(radius);
+  const pie = d3
+    .pie()
+    .sort(null)
+    .value((d) => d.value);
+
+  return {
+    update(data) {
+      color.domain(data.map((d) => d.label));
+      const arcs = pie(data);
+      const transition = d3.transition().duration(700);
+
+      group
+        .selectAll('path')
+        .data(arcs, (d) => d.data.label)
+        .join(
+          (enter) => {
+            const path = enter
+              .append('path')
+              .attr('fill', (d) => color(d.data.label))
+              .attr('d', arc)
+              .each(function (d) {
+                this._current = d;
+              });
+            path.append('title').text((d) => `${d.data.label}: ${d.data.value}`);
+            return path;
+          },
+          (update) => update,
+          (exit) => exit.remove()
+        )
+        .transition(transition)
+        .attrTween('d', function (d) {
+          const interpolate = d3.interpolate(this._current, d);
+          this._current = interpolate(1);
+          return (t) => arc(interpolate(t));
+        });
+
+      group
+        .selectAll('path')
+        .select('title')
+        .text((d) => `${d.data.label}: ${d.data.value}`);
+
+      group
+        .selectAll('path')
+        .on('mouseenter', (event, d) => {
+          const { left, top } = radialExample.node().getBoundingClientRect();
+          const x = (event.clientX ?? event.pageX) - left;
+          const y = (event.clientY ?? event.pageY) - top;
+          tooltip
+            .style('left', `${x + 12}px`)
+            .style('top', `${y + 12}px`)
+            .style('opacity', 1)
+            .style('display', 'grid')
+            .html(`<strong>${d.data.label}</strong><span>${d.data.value}</span>`);
+        })
+        .on('mousemove', (event) => {
+          const { left, top } = radialExample.node().getBoundingClientRect();
+          const x = (event.clientX ?? event.pageX) - left;
+          const y = (event.clientY ?? event.pageY) - top;
+          tooltip.style('left', `${x + 12}px`).style('top', `${y + 12}px`);
+        })
+        .on('mouseleave', () => {
+          tooltip.style('opacity', 0).style('display', 'none');
+        });
+
+      const total = d3.sum(data, (d) => d.value);
+      const keys = legend
+        .selectAll('.radial-key')
+        .data(data, (d) => d.label)
+        .join(
+          (enter) => {
+            const row = enter.append('div').attr('class', 'radial-key');
+            row.append('span').attr('class', 'swatch');
+            row.append('span').attr('class', 'label');
+            row.append('strong').text('0%');
+            return row;
+          },
+          (update) => update,
+          (exit) => exit.remove()
+        );
+
+      keys.select('.label').text((d) => d.label);
+      keys.select('.swatch').style('background', (d) => color(d.label));
+
+      keys.select('strong')
+        .each(function (d) {
+          const target = Math.round((d.value / total) * 100);
+          const fallback = Number(this.textContent.replace('%', ''));
+          const current = Number.isFinite(this.__current) ? this.__current : Number.isFinite(fallback) ? fallback : 0;
+          this.__current = target;
+          d3.select(this)
+            .transition()
+            .duration(600)
+            .tween('text', () => {
+              const interpolate = d3.interpolateNumber(current, target);
+              return (t) => {
+                this.textContent = `${Math.round(interpolate(t))}%`;
+              };
+            });
+        });
+    }
+  };
+}
+
+/**
+ * Factory for a scatterplot with hover labels.
+ * @param {{group: d3.Selection, width: number, height: number}} params
+ */
+function createScatterPlot({ group, width, height }) {
+  const xScale = d3.scaleLinear().domain([0, 60]).range([0, width]).nice();
+  const yScale = d3.scaleLinear().domain([0, 60]).range([height, 0]).nice();
+  const color = d3
+    .scaleOrdinal()
+    .domain(['Beginner', 'Intermediate', 'Advanced'])
+    .range(['#ffd94a', '#6ae1ff', '#ff2b70']);
+
+  const xAxis = group.append('g').attr('transform', `translate(0, ${height})`);
+  const yAxis = group.append('g');
+  xAxis.call(d3.axisBottom(xScale));
+  yAxis.call(d3.axisLeft(yScale));
+
+  const dots = group.append('g');
+  const labels = group.append('g');
+
+  return {
+    update(data) {
+      dots
+        .selectAll('circle')
+        .data(data, (d) => d.name)
+        .join(
+          (enter) =>
+            enter
+              .append('circle')
+              .attr('cx', (d) => xScale(d.x))
+              .attr('cy', (d) => yScale(d.y))
+              .attr('r', 0)
+              .attr('fill', (d) => color(d.group))
+              .attr('opacity', 0.85)
+              .call((enter) => enter.transition().duration(400).attr('r', 7)),
+          (update) =>
+            update
+              .transition()
+              .duration(400)
+              .attr('cx', (d) => xScale(d.x))
+              .attr('cy', (d) => yScale(d.y))
+              .attr('fill', (d) => color(d.group)),
+          (exit) => exit.transition().duration(200).attr('r', 0).remove()
+        );
+
+      labels
+        .selectAll('text')
+        .data(data, (d) => d.name)
+        .join(
+          (enter) =>
+            enter
+              .append('text')
+              .attr('text-anchor', 'start')
+              .attr('font-size', 12)
+              .attr('fill', '#f7f7ff')
+              .attr('opacity', 0),
+          (update) => update,
+          (exit) => exit.remove()
+        )
+        .attr('x', (d) => xScale(d.x) + 10)
+        .attr('y', (d) => yScale(d.y) + 4)
+        .text((d) => d.name);
+
+      dots
+        .selectAll('circle')
+        .on('mouseenter', (_, d) => {
+          labels.selectAll('text').attr('opacity', (label) => (label.name === d.name ? 1 : 0));
+        })
+        .on('mouseleave', () => {
+          labels.selectAll('text').attr('opacity', 0);
+        });
+    }
+  };
+}
+
+/**
+ * Factory for a force-directed network.
+ * @param {{group: d3.Selection, width: number, height: number}} params
+ */
+function createNetwork({ group, width, height }) {
+  const linkGroup = group.append('g').attr('stroke', 'rgba(255,255,255,0.35)');
+  const nodeGroup = group.append('g');
+
+  return {
+    render({ nodes, links }) {
+      const simulation = d3
+        .forceSimulation(nodes)
+        .force('charge', d3.forceManyBody().strength(-180))
+        .force('link', d3.forceLink(links).id((d) => d.id).distance(90))
+        .force('center', d3.forceCenter(width / 2, height / 2));
+
+      const link = linkGroup
+        .selectAll('line')
+        .data(links)
+        .join('line')
+        .attr('stroke-width', 2);
+
+      const node = nodeGroup
+        .selectAll('g.node')
+        .data(nodes, (d) => d.id)
+        .join((enter) => {
+          const g = enter.append('g').attr('class', 'node');
+          g.append('circle')
+            .attr('r', 18)
+            .attr('fill', 'rgba(255,43,112,0.85)')
+            .attr('stroke', 'rgba(255,255,255,0.6)')
+            .attr('stroke-width', 1.5);
+          g.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'middle')
+            .attr('font-size', 11)
+            .attr('fill', '#0b0a1d')
+            .text((d) => d.id);
+          return g;
+        })
+        .call(
+          d3
+            .drag()
+            .on('start', (event, d) => {
+              if (!event.active) simulation.alphaTarget(0.3).restart();
+              d.fx = d.x;
+              d.fy = d.y;
+            })
+            .on('drag', (event, d) => {
+              d.fx = event.x;
+              d.fy = event.y;
+            })
+            .on('end', (event, d) => {
+              if (!event.active) simulation.alphaTarget(0);
+              d.fx = null;
+              d.fy = null;
+            })
+        );
+
+      simulation.on('tick', () => {
+        link
+          .attr('x1', (d) => d.source.x)
+          .attr('y1', (d) => d.source.y)
+          .attr('x2', (d) => d.target.x)
+          .attr('y2', (d) => d.target.y);
+
+        node.attr('transform', (d) => `translate(${d.x}, ${d.y})`);
+      });
+    }
+  };
 }
