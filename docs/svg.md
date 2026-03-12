@@ -1,25 +1,31 @@
-# SVG notes
+# SVG Quick Reference
 
-## Why SVG?
+## Why this starter uses SVG
 
-- SVG (Scalable Vector Graphics) describes shapes in XML, so they stay crisp at any zoom level.
-- D3 loves SVG because every bar, axis tick, or label can be addressed with regular DOM operations.
+- SVG scales cleanly and stays sharp.
+- D3 can bind data directly to SVG marks (`rect`, `path`, `circle`, `text`).
 
-## `viewBox` makes SVG responsive
+## Existing SVG element
 
+This starter defines the SVG container in `index.html`:
+
+```html
+<svg id="bar-chart" viewBox="0 0 720 400"></svg>
 ```
-<svg viewBox="0 0 560 360">
-  <!-- ... -->
-</svg>
+
+D3 then selects and populates it:
+
+```js
+const svgElement = document.getElementById('bar-chart');
+const svg = d3.select(svgElement);
 ```
 
-- `viewBox="minX minY width height"` defines an internal coordinate system.
-- Any explicit `width`/`height` on the SVG simply scales that coordinate system up or down.
-- By omitting `width`/`height` (or setting them to `100%`), the browser can stretch the SVG to fill its container while keeping the original aspect ratio defined by the viewBox.
-- In this project the chart uses `viewBox="0 0 560 360"`, so even if the actual `<svg>` is resized (e.g., `width: 100%` via CSS), the contents maintain a 560x360 proportion.
+## Margin convention
 
-## Practical D3 tips
+Chart content is drawn in an inner translated group:
 
-1. Define `svgWidth`, `svgHeight`, and `margin` in JavaScript to match the numbers used in the viewBox. This keeps scales and layout math consistent.
-2. Use `preserveAspectRatio="xMidYMid meet"` when you want the chart centered and fully visible inside any container.
-3. When mixing HTML and SVG (like this template), wrap each visualization in its own container so the responsive rules only apply where you need them.
+```js
+const chart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+```
+
+This creates safe space for axes and keeps positioning math predictable.
