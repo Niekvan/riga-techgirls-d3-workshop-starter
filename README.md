@@ -1,62 +1,113 @@
-# D3 + Vite Workshop Starter
+# D3 + Vite Starter Template
 
-This template gives workshop participants a ready-to-run D3 playground with Vite and pnpm. It includes a simple bar chart, modern tooling, and a minimal amount of scaffolding so attendees can focus on learning core D3 concepts. The UI borrows Riga TechGirls’ vibrant pink/purple palette so the workshop instantly feels on-brand.
+A neutral starter for building D3 visualizations with modern tooling.  
+The default app includes one animated bar chart and one update button so you can quickly adapt it to your own data and chart type.
 
 ## Prerequisites
 
-- **Node.js 24+** – install from [nodejs.org](https://nodejs.org/) or via a version manager such as `fnm`, `nvm`, or `asdf`.
-- **pnpm 10+** – install globally (`corepack enable` works on Node 18.19+), or follow the [pnpm docs](https://pnpm.io/installation).
-- **Post-install approvals** – pnpm may prompt to approve post-install scripts (e.g., when dependencies run build steps). Approve these during installation so packages like Vite can finish setting up.
+- Node.js `24+`
+- pnpm `10+`
 
 ## Getting Started
 
 ```bash
-pnpm install        # approve any post-install scripts when prompted
+pnpm install
 pnpm dev
 ```
 
-Vite prints a local URL (default `http://localhost:5173`). Open it to view the starter visualization.
+Vite prints a local URL (usually `http://localhost:5173`).
 
-### Troubleshooting
+## Use This Starter In Your Own Repo
 
-- **Missing dependencies** – rerun `pnpm install` to ensure the lockfile is respected.
-- **Permission prompts** – if pnpm warns that scripts were skipped, re-run `pnpm install --ignore-scripts=false` and approve them.
-- **Node version mismatch** – confirm `node -v` is >= 18 and restart your terminal after switching versions.
+You can use this starter in two common ways.
 
-## Build & Preview
+### Option 1: Use as a GitHub template
+
+1. Click **Use this template** on GitHub.
+2. Create a new repository from this starter.
+3. Clone your new repository locally:
+
+```bash
+git clone <your-new-repo-url>
+cd <your-new-repo-name>
+pnpm install
+pnpm dev
+```
+
+### Option 2: Clone and re-publish manually
+
+```bash
+git clone <this-repo-url> my-d3-project
+cd my-d3-project
+rm -rf .git
+git init
+git add .
+git commit -m "Initialize from D3 starter template"
+git branch -M main
+git remote add origin <your-new-repo-url>
+git push -u origin main
+```
+
+## Build and Preview
 
 ```bash
 pnpm build
 pnpm preview
 ```
 
-`pnpm preview` serves the production bundle locally for a final check before sharing workshop materials.
+`pnpm preview` serves the production build from `dist/`.
 
-## Included Examples
+## Architecture
 
-1. **Animated bar chart** – demonstrates the D3 update/join pattern, transitions, and scale updates. Use the **Randomize data** button to trigger new values and watch the bars animate into place.
-2. **Data-bound participant cards** – shows how D3 can bind data to regular DOM nodes (no SVG required). Click **Shuffle participants** to reorder the cards; D3 handles the DOM diff and animates the movement.
-3. **Radial donut chart** – uses `d3.pie` + `d3.arc` to generate a circular chart. Click **Randomize topics** to update the arcs.
-4. **Interactive scatterplot** – shows scales, axes, and hover labels. Click **Jitter points** to nudge values and update positions.
-5. **Force-directed network** – demonstrates `d3-force` with draggable nodes and live layout updates.
-6. **Remote Kaggle dataset loader** – fetches a slice of the [Goodbooks-10k dataset](https://www.kaggle.com/datasets/zygmuntz/goodbooks-10k) and binds the results to cards. Hit **Load Kaggle sample** to pull the latest data (requires network access).
+- Static page structure is defined in [index.html](/Users/niekvansleeuwen/Documents/personal/riga-techgirls/d3-template/index.html).
+- Plain DOM APIs handle non-SVG interactions (for example, button event binding).
+- D3 handles SVG chart behavior only (scales, axes, joins, transitions).
+
+## What Is Included
+
+- A single D3 bar chart example in [`src/main.js`](/Users/niekvansleeuwen/Documents/personal/riga-techgirls/d3-template/src/main.js)
+- Clean baseline styling in [`src/style.css`](/Users/niekvansleeuwen/Documents/personal/riga-techgirls/d3-template/src/style.css)
+- Vite setup for fast local development and production builds
+- GitHub Pages workflow in [`.github/workflows/deploy.yml`](/Users/niekvansleeuwen/Documents/personal/riga-techgirls/d3-template/.github/workflows/deploy.yml)
 
 ## Project Structure
 
-```
-├── index.html        # Entry HTML document loaded by Vite
-├── src
-│   ├── main.js       # D3 bootstrap + starter visualization
-│   └── style.css     # Minimal styles for the demo
-├── package.json
-└── vite.config.js
+```txt
+.
+├─ index.html
+├─ src/
+│  ├─ main.js
+│  └─ style.css
+├─ docs/
+│  ├─ structure.md
+│  ├─ svg.md
+│  ├─ animations.md
+│  └─ deployment.md
+├─ package.json
+└─ vite.config.js
 ```
 
-## Customizing for the Workshop
+## How to Extend This Starter
 
-- Edit `src/main.js` to introduce new datasets, scales, or interaction techniques.
-- Expand `src/style.css` to demonstrate responsive layouts or theming.
-- Swap the accent variables in `src/style.css` if you need to adapt the Riga TechGirls palette to another event.
-- Adjust `vite.config.js` if you need custom aliases, plugins, or a different dev server port.
-- Update the README with workshop-specific steps (links to slides, exercises, or data sources).
-- Review `docs/structure.md` for insight into the container layout + sizing approach, and `docs/animations.md` for the FLIP walkthrough used in the DOM example.
+1. Replace `initialData` with your own dataset in `src/main.js`.
+2. Add HTML controls/sections in `index.html`.
+3. Bind new controls with plain DOM APIs in `src/main.js`.
+4. Reuse the `createBarChart` updater pattern for new SVG visualizations.
+5. Split chart logic into modules under `src/` as complexity grows.
+6. Update scales and shape generators (`line`, `arc`, `area`, etc.) for new chart types.
+
+## Deployment
+
+Push to `main` to trigger the Pages workflow.  
+See [`docs/deployment.md`](/Users/niekvansleeuwen/Documents/personal/riga-techgirls/d3-template/docs/deployment.md) for details.
+
+### Enable GitHub Pages In Your Repo
+
+To make Pages deployment work in your own project:
+
+1. Keep [`.github/workflows/deploy.yml`](/Users/niekvansleeuwen/Documents/personal/riga-techgirls/d3-template/.github/workflows/deploy.yml) in your repository.
+2. Go to **Settings -> Pages**.
+3. Under **Source**, choose **GitHub Actions**.
+4. Push to `main` (or run the workflow manually from the Actions tab).
+
+If your default branch is not `main`, update the trigger branch in `deploy.yml`.

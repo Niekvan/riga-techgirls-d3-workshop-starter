@@ -7,7 +7,25 @@
     <title>D3 + Vite Starter</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <main class="starter">
+        <h1>D3 Starter Template</h1>
+        <p class="subtitle">One chart, one update pattern. Extend from here.</p>
+
+        <section class="chart-section">
+          <h2>Animated Bar Chart</h2>
+          <p class="hint">Click "Update data" to trigger a data join + transition.</p>
+          <button id="update-data-button" type="button">Update data</button>
+
+          <svg
+            id="bar-chart"
+            viewBox="0 0 720 400"
+            role="img"
+            aria-label="Bar chart with randomized values"
+          ></svg>
+        </section>
+      </main>
+    </div>
     <script type="module" src="./src/main.js"></script>
   </body>
 </html>
